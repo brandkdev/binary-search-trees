@@ -4,18 +4,29 @@ require_relative './node'
 
 # tree structure in which nodes are specified
 class Tree
+  attr_reader :root
 
   def initialize(array)
-    @tree_array = array
-    @root = 0
+    @tree_array = array.sort.uniq
+    @root = build_tree(@tree_array, 0, array.length - 1)
+    @end_array = @tree_array.length - 1
   end
 
-  def build_tree(array)
+  def build_tree(array = @tree_array, start = 0, end_array = @end_array)
+    if start > end_array
+      nil
+    else
+      mid = (start + end_array) / 2
+      root = Node.new(array[mid])
+      root.left = build_tree(array, start, mid - 1)
+      root.right = build_tree(array, mid + 1, end_array)
+      root
+    end
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
-    puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
+    puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
     pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
   end
 
